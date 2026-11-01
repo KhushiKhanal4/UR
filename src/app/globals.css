@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* Design tokens mirrored from the Figma variables (background/*, text/*, surface/*, border/*, action/*). */
+@theme {
+  --color-page: #f8f8fa;
+  --color-dark: #131319;
+  --color-dark-raised: #1e1e24;
+  --color-card: #ffffff;
+  --color-subtle: #f4f4f6;
+  --color-line: #e2e2e5;
+  --color-ink: #131319;
+  --color-muted: #626063;
+  --color-muted-dark: #c7c7c7;
+  --color-primary: #551fa2;
+  /* the accent where it sits on --color-dark (Journey's dots and progress) */
+  --color-primary-soft: #9a72e6;
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-dm: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-geist: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-marquee: marquee 24s linear infinite;
+  --animate-marquee-logos: marquee 22s linear infinite;
+  --animate-grain: grain 0.8s steps(1) infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* film grain: the noise tile jumps to a new offset every frame step, so it shimmers */
+  @keyframes grain {
+    0% { transform: translate3d(0, 0, 0); }
+    12.5% { transform: translate3d(-40px, 30px, 0); }
+    25% { transform: translate3d(55px, -45px, 0); }
+    37.5% { transform: translate3d(-70px, -20px, 0); }
+    50% { transform: translate3d(25px, 65px, 0); }
+    62.5% { transform: translate3d(-15px, -75px, 0); }
+    75% { transform: translate3d(80px, 15px, 0); }
+    87.5% { transform: translate3d(-60px, 50px, 0); }
+  }
+}
+
+@layer base {
+  /* smooth scrolling (and anchor links) are Lenis's: native smooth scrolling would fight it */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  /* the hero's opening (HeroIntro) reveals these; hidden until it runs so they never flash */
+  html.hero-intro [data-hero] {
+    visibility: hidden;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+
+  @media (width >= 80rem) {
+    padding-inline: 80px;
+  }
+}
+
+/* Off-screen sections skip layout/paint until they approach the viewport. */
+/* Figma's monotone noise effect (black, 25%, size 0.5, density 1): a fractal-noise tile drawn
+   at half size so each grain is half a pixel of the design, black with the noise as alpha. */
+@utility noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.8 0 0 0 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+@utility defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
+/* ══ Particles ═════════════════════════════════════════════
+   lab/Particles.tsx. The dots are drawn on a canvas in the
+   element's own `color`, so the ink is set here and the theme
+   carries it.
+
+   Bencho's tokens, mapped to this project's own rather than
+   defined anew: --fill-on (the accent a fill is drawn in) is
+   --color-primary, and --ink (the fallback) is --color-ink. */
+@layer components {
+  .ptc {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .ptc-canvas {
+    display: block;
+    color: var(--color-primary, var(--color-ink));
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  /* Added: fill the container, keeping the field's proportions —
+     the canvas is as large as fits both ways (container units). */
+  .ptc[data-fluid] {
+    container-type: size;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Added: flush with the content's left edge (desktop Services) */
+  .ptc[data-align="start"] {
+    justify-items: start;
+  }
+
+  .ptc[data-fluid] .ptc-canvas {
+    width: min(100cqw, 100cqh * var(--ptc-ratio));
+    height: auto;
+  }
+
+  /* Added: on a scrolling page, a vertical swipe over the dots
+     must still scroll it; the dots keep horizontal drags. */
+  .ptc-canvas[data-scroll] {
+    touch-action: pan-y;
+  }
+
+  /* Added: on the dark Journey chapters the deep accent disappears */
+  .ptc-on-dark .ptc-canvas {
+    color: var(--color-primary-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

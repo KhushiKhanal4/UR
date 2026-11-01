@@ -1,0 +1,8 @@
+{
+  "enabledMcpjsonServers": [
+    "motion"
+  ],
+  "disabledMcpjsonServers": [
+    "motion-plus"
+  ]
+}
