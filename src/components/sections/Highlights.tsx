@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { highlightReel, highlightTiles } from "@/data/content";
+import { highlightTiles } from "@/data/content";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -14,10 +14,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const FEATURED = 4;
 
 /**
- * The reel opens full screen with its title over it. Pinned, the scroll shrinks it into the
- * centre of a 3×3 grid of talks: the whole grid starts at 3× around its centre, so the reel
- * fills the screen and its neighbours wait just past the edges, then they slide in as it
- * scales down to fit. Once the grid is whole, the reel's play button and caption come up.
+ * The reel opens full screen. Pinned, the scroll shrinks it into the centre of a 3×3 grid of
+ * talks: the whole grid starts at 3× around its centre, so the reel fills the screen and its
+ * neighbours wait just past the edges, then they slide in as it scales down to fit.
  * Tiles touch (Figma: Video component, 652:1014).
  */
 export function Highlights() {
@@ -33,14 +32,8 @@ export function Highlights() {
             defaults: { ease: "none" },
             scrollTrigger: { trigger: stage.current, start: "top top", end: "+=180%", pin: true, scrub: 0.6 },
           })
-          .fromTo("[data-hl-title]", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.12, ease: "power2.out" }, 0)
           .fromTo("[data-hl-grid]", { scale: 3 }, { scale: 1, duration: 0.75, ease: "power1.inOut" }, 0.1)
-          .to("[data-hl-title]", { opacity: 0, y: -24, duration: 0.18, ease: "power1.in" }, 0.24)
-          .fromTo("[data-hl-meta]", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.82)
           .set({}, {}, 1);
-      });
-      mm.add("(min-width: 768px) and (prefers-reduced-motion: reduce)", () => {
-        gsap.set("[data-hl-title]", { opacity: 0 });
       });
     },
     { scope: stage },
@@ -72,14 +65,6 @@ export function Highlights() {
             </div>
           ))}
         </div>
-
-        <p
-          data-hl-title
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center text-balance text-center text-[clamp(48px,7vw,104px)] font-semibold leading-none tracking-[-0.06em] text-white [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]"
-        >
-          {highlightReel.title}
-        </p>
       </div>
     </section>
   );
@@ -118,35 +103,20 @@ function ReelVideo() {
   }, []);
 
   return (
-    <>
-      <video
-        ref={ref}
-        muted
-        loop
-        playsInline
-        disablePictureInPicture
-        disableRemotePlayback
-        preload="none"
-        poster={highlightTiles[FEATURED].src}
-        aria-label={highlightTiles[FEATURED].alt}
-        tabIndex={-1}
-        className="pointer-events-none absolute inset-0 size-full object-cover"
-      >
-        <source src="/videos/UR.mp4" type="video/mp4" />
-      </video>
-      <ReelMeta />
-    </>
-  );
-}
-
-/** Caption on the featured reel, shown once the grid has formed. */
-function ReelMeta() {
-  return (
-    <div data-hl-meta className="absolute inset-0 flex flex-col justify-end bg-black/25 p-3 sm:p-4">
-      <span className="flex items-end justify-between gap-2 text-[10px] font-medium uppercase tracking-[-0.2px] text-white/85 sm:text-[11px]">
-        <span className="whitespace-nowrap">{highlightReel.years}</span>
-        <span className="hidden truncate sm:block">{highlightReel.caption}</span>
-      </span>
-    </div>
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      disablePictureInPicture
+      disableRemotePlayback
+      preload="none"
+      poster={highlightTiles[FEATURED].src}
+      aria-label={highlightTiles[FEATURED].alt}
+      tabIndex={-1}
+      className="pointer-events-none absolute inset-0 size-full object-cover"
+    >
+      <source src="/videos/UR.mp4" type="video/mp4" />
+    </video>
   );
 }

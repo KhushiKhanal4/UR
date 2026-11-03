@@ -70,6 +70,8 @@ export function Footer() {
                     <li key={social.label}>
                       <a
                         href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         aria-label={social.label}
                         className="flex size-10 items-center opacity-90 transition-opacity hover:opacity-100"
                       >

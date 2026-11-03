@@ -29,32 +29,41 @@ export const about = {
   ],
 };
 
-export const INSTAGRAM_HREF = "#";
+export const INSTAGRAM_HREF = "https://www.instagram.com/ujjwalroyx?cplk=anV5ejNhMjR5bjcz";
 
 /** Instagram-style gallery under the biography: a curated grid, every tile opens the profile. */
 export const instagram = {
-  handle: "@ujjwalroy",
+  handle: "@ujjwalroyx",
   href: INSTAGRAM_HREF,
   avatar: "/images/about-featured.png",
-  posts: [
-    { src: "/images/about-featured.png", alt: "Portrait of Ujjwal Roy" },
-    { src: "/images/about-left.png", alt: "Ujjwal Roy speaking at an event" },
-    { src: "/images/about-right.png", alt: "Ujjwal Roy with collaborators" },
-    { src: "/images/highlights/h5-featured.png", alt: "Ujjwal Roy giving a keynote at Mindful March" },
-    { src: "/images/highlights/h1.png", alt: "Ujjwal Roy speaking in a studio interview" },
-    { src: "/images/highlights/h3.png", alt: "Ujjwal Roy recording a podcast" },
-    { src: "/images/highlights/h4.png", alt: "Ujjwal Roy seated for a long-form interview" },
-    { src: "/images/highlights/h6.png", alt: "Ujjwal Roy answering questions on a podcast" },
+  /** How many tiles the grid shows; they're drawn at random from `posts` on each visit. */
+  gridSize: 8,
+  /** `fit: "contain"` shows the whole photo over a blurred copy of itself instead of cropping it. */
+  posts: <{ src: string; alt: string; fit?: "contain" }[]>[
+    { src: "/images/about-section/image1.png", alt: "Ujjwal Roy named Founding President of the World AI Alliance" },
+    { src: "/images/about-section/image2.png", alt: "Driving through San Francisco at night" },
+    { src: "/images/about-section/image3.png", alt: "Ujjwal Roy at the Pyramids of Giza" },
+    { src: "/images/about-section/image4.png", alt: "Podcast episode on AGI and the next breakthrough" },
+    { src: "/images/about-section/image5.png", alt: "Podcast episode on the future of work and jobs" },
+    { src: "/images/about-section/image6.png", alt: "Podcast episode on how much work AI will do" },
+    { src: "/images/about-section/image7.png", alt: "Ujjwal Roy discussing why Meta and Google keep getting hit" },
+    { src: "/images/about-section/about-featured.png", alt: "Ujjwal Roy in front of a rocket-launch backdrop" },
+    // the two people stand at opposite edges: a portrait crop would cut one off, so show it whole
+    {
+      src: "/images/about-section/trade-fair.png",
+      alt: "Ujjwal Roy at the New York International Trade Fair awards",
+      fit: "contain",
+    },
   ],
 };
 
 export type Social = { label: string; href: string; icon: string; size: number };
 
 const footerSocials: Social[] = [
-  { label: "LinkedIn", href: "#", icon: "/images/social-linkedin.svg", size: 40 },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ujjwalroyx", icon: "/images/social-linkedin.svg", size: 40 },
   { label: "X", href: "#", icon: "/images/social-x.svg", size: 40 },
   { label: "YouTube", href: "#", icon: "/images/social-youtube.svg", size: 16 },
-  { label: "Facebook", href: "#", icon: "/images/social-facebook.svg", size: 40 },
+  { label: "Facebook", href: "https://www.facebook.com/ujjwal.roy.9985/", icon: "/images/social-facebook.svg", size: 40 },
 ];
 
 /** Every profile, Instagram first (the About gallery's row). The footer keeps its original four. */
@@ -170,6 +179,8 @@ export type Product = {
   summary: string;
   categories: string[];
   image: string;
+  /** the product's own site; the whole card links there */
+  href: string;
 };
 
 export const products: Product[] = [
@@ -179,6 +190,7 @@ export const products: Product[] = [
     summary: "Run your marketing on autopilot",
     categories: ["Meta", "google"],
     image: "/images/product-marketing-bg.png",
+    href: "https://hyperscalerai.co/",
   },
   {
     id: "quantum-computing",
@@ -186,6 +198,7 @@ export const products: Product[] = [
     summary: "Quantum Computing Infrastructure",
     categories: ["Quantum physics", "Infrastructure", "simulation"],
     image: "/images/product-quantum-bg.png",
+    href: "https://thequantumx.com/",
   },
 ];
 
@@ -205,8 +218,6 @@ export const highlightTiles = [
   { src: "/images/highlights/h8.png", alt: "Ujjwal Roy interviewed on a talk show" },
   { src: "/images/highlights/h9.png", alt: "Ujjwal Roy in a roundtable discussion" },
 ] as const;
-
-export const highlightReel = { title: "On Air ©26", years: "2023–26", caption: "Keynotes & interviews" };
 
 export const marqueeItems = [
   { title: "Launched Products", font: "font-sans" },

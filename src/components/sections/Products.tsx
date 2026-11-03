@@ -86,7 +86,12 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             </div>
           ))}
 
-          <a href="#" className="relative flex flex-col py-12 md:py-16 lg:py-0">
+          <a
+            href={product.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative flex flex-col py-12 md:py-16 lg:py-0"
+          >
             <div className="grid h-8 grid-cols-[1fr_2fr] text-[12px] sm:grid-cols-3 font-medium uppercase leading-3 tracking-[-0.24px]">
               <span className="font-dm text-muted-dark">{String(index).padStart(2, "0")}.</span>
               <span className="flex gap-[5px]">

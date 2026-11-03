@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -28,6 +28,18 @@ function SocialGlyph({ icon, size }: { icon: string; size: number }) {
 export function About() {
   const root = useRef<HTMLElement>(null);
   const ink = useRef<HTMLDivElement>(null);
+
+  // The server renders the posts in order; once mounted, swap in a random pick so the
+  // markup still hydrates cleanly. Tiles are keyed by position, so GSAP keeps its targets.
+  const [posts, setPosts] = useState(() => instagram.posts.slice(0, instagram.gridSize));
+  useEffect(() => {
+    const pool = [...instagram.posts];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    setPosts(pool.slice(0, instagram.gridSize));
+  }, []);
 
   // a normal section, no pinning: the biography inks in as it scrolls up through the screen
   useGSAP(
@@ -102,20 +114,31 @@ export function About() {
           </div>
 
           <ul data-anim="stagger" className="grid grid-cols-2 gap-1 sm:grid-cols-4 md:gap-2">
-            {instagram.posts.map((post) => (
-              <li key={post.src}>
+            {posts.map((post, i) => (
+              <li key={i}>
                 <a
                   href={instagram.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative block aspect-square overflow-hidden bg-subtle"
+                  className="group relative block aspect-[3/4] overflow-hidden bg-subtle"
                 >
+                  {post.fit === "contain" && (
+                    // a blurred, cropped copy fills the bands around the uncropped photo
+                    <Image
+                      src={post.src}
+                      alt=""
+                      aria-hidden
+                      fill
+                      sizes="(min-width: 1350px) 300px, (min-width: 640px) 25vw, 50vw"
+                      className="scale-110 object-cover blur-xl brightness-75"
+                    />
+                  )}
                   <Image
                     src={post.src}
                     alt={post.alt}
                     fill
                     sizes="(min-width: 1350px) 300px, (min-width: 640px) 25vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className={`${post.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-105`}
                   />
                   <span className="absolute inset-0 flex items-center justify-center bg-dark/0 text-white opacity-0 transition duration-300 group-hover:bg-dark/40 group-hover:opacity-100">
                     <SocialGlyph icon="/images/social-instagram.svg" size={40} />
