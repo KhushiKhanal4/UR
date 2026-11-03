@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,6 +12,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /* The middle of the 3×3 grid: the featured reel. */
 const FEATURED = 4;
+
+/* the reel's poster is a plain <video> attribute, so ask next/image for its optimised URL */
+const POSTER_SRC = getImageProps({ src: highlightTiles[FEATURED].src, alt: "", width: 1538, height: 756 }).props.src;
 
 /**
  * The reel opens full screen. Pinned, the scroll shrinks it into the centre of a 3×3 grid of
@@ -111,7 +114,7 @@ function ReelVideo() {
       disablePictureInPicture
       disableRemotePlayback
       preload="none"
-      poster={highlightTiles[FEATURED].src}
+      poster={POSTER_SRC}
       aria-label={highlightTiles[FEATURED].alt}
       tabIndex={-1}
       className="pointer-events-none absolute inset-0 size-full object-cover"

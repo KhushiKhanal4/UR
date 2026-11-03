@@ -1,4 +1,5 @@
 import { Footer } from "@/components/layout/Footer";
+import { StructuredData } from "@/components/seo/StructuredData";
 import { ScrollAnimations } from "@/components/motion/ScrollAnimations";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { About } from "@/components/sections/About";
@@ -14,6 +15,7 @@ import { Services } from "@/components/sections/Services";
 export default function HomePage() {
   return (
     <>
+      <StructuredData />
       <main className="overflow-x-clip">
         <Hero />
         <About />

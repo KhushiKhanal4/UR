@@ -25,8 +25,11 @@ type PillButtonProps = ComponentProps<"a"> & { variant?: Variant };
  */
 export function PillButton({ variant = "light", className = "", children, ...props }: PillButtonProps) {
   const v = variants[variant];
+  /* external links (e.g. the Calendly booking page) open in a new tab */
+  const external = typeof props.href === "string" && /^https?:\/\//.test(props.href);
   return (
     <a
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={`group relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden whitespace-nowrap rounded-full font-semibold tracking-[-0.5px] transition-[color,translate,scale] duration-500 ${EASE} hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current motion-reduce:transition-colors motion-reduce:hover:translate-y-0 ${v.base} ${className}`}
       {...props}
     >

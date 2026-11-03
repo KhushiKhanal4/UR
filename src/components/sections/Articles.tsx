@@ -6,7 +6,7 @@ export function Articles() {
   return (
     <section id="articles" className="relative scroll-mt-10 pb-16 lg:pb-[127px]">
       <Image
-        src="/images/articles-decorative.png"
+        src="/images/articles-decorative.webp"
         alt=""
         width={413}
         height={308}

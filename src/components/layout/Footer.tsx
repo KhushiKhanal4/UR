@@ -2,7 +2,8 @@ import { BackgroundVideo } from "@/components/motion/BackgroundVideo";
 import { PillButton } from "@/components/ui/PillButton";
 import { BOOKING_HREF, footer } from "@/data/content";
 
-export function Footer() {
+/** `base` prefixes the in-page links ("/" on pages other than home). */
+export function Footer({ base = "" }: { base?: string }) {
   return (
     <footer id="contact" className="relative isolate overflow-hidden bg-[#111] text-white">
       {/* Atmospheric backdrop + shading, behind the whole footer: the navigation panel is
@@ -48,7 +49,7 @@ export function Footer() {
                   <ul className="flex flex-col gap-2 text-[14px] font-light leading-[1.25] text-[rgba(212,212,216,0.9)]">
                     {column.links.map((link) => (
                       <li key={link.label} className="min-h-[18px]">
-                        <a href={link.href} className="transition-colors hover:text-white">
+                        <a href={link.href.startsWith("#") ? base + link.href : link.href} className="transition-colors hover:text-white">
                           {link.label}
                         </a>
                       </li>

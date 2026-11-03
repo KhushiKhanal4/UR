@@ -50,7 +50,15 @@ export function SmoothScroll() {
         })
       : null;
 
+    /* the booking pop-up freezes the page behind it */
+    const stop = () => lenis.stop();
+    const start = () => lenis.start();
+    window.addEventListener("booking:open", stop);
+    window.addEventListener("booking:close", start);
+
     return () => {
+      window.removeEventListener("booking:open", stop);
+      window.removeEventListener("booking:close", start);
       slow?.kill();
       gsap.ticker.remove(tick);
       gsap.ticker.lagSmoothing(500, 33);

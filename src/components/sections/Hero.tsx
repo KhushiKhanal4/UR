@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { BackgroundVideo } from "@/components/motion/BackgroundVideo";
 import { HeroIntro } from "@/components/motion/HeroIntro";
+import { CroppedImage, type Crop } from "@/components/ui/CroppedImage";
 import { FadeRule } from "@/components/ui/GradientRule";
 import { PillButton } from "@/components/ui/PillButton";
 import { BOOKING_HREF, hero } from "@/data/content";
@@ -87,22 +88,17 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="flex w-full max-w-[433px] flex-col gap-3.5">
-              <div className="flex items-center gap-2.5">
-                <span data-hero="fade" className="whitespace-nowrap text-[16px] leading-[29px] text-muted-dark">
-                  Formerly at
-                </span>
-                <span
-                  aria-hidden
-                  data-hero="draw"
-                  className="h-px flex-1"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to right, rgba(255,255,255,0.45), rgba(255,255,255,0.22), rgba(255,255,255,0.09))",
-                  }}
-                />
+            {/* Formerly at, then Building with below it; anchored to the bottom, so adding the
+                second block lifts the first */}
+            <div className="flex w-full max-w-[433px] flex-col gap-[30px]">
+              <div className="flex flex-col gap-3.5">
+                <LogoHeading>Formerly at</LogoHeading>
+                <LogoMarquee />
               </div>
-              <LogoMarquee />
+              <div className="flex flex-col gap-3.5">
+                <LogoHeading>Building with</LogoHeading>
+                <BuildingWith />
+              </div>
             </div>
           </div>
         </div>
@@ -111,32 +107,119 @@ export function Hero() {
   );
 }
 
-/** The former employers on an endless loop, like the Launched Products titles: the logo strip
-    is drawn twice so a -50% translate wraps seamlessly, and the ends fade into the hero. */
-function LogoMarquee() {
+/** A logo group's label with a rule fading out to its right. */
+function LogoHeading({ children }: { children: string }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span data-hero="fade" className="whitespace-nowrap text-[16px] leading-[29px] text-muted-dark">
+        {children}
+      </span>
+      <span
+        aria-hidden
+        data-hero="draw"
+        className="h-px flex-1"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(255,255,255,0.45), rgba(255,255,255,0.22), rgba(255,255,255,0.09))",
+        }}
+      />
+    </div>
+  );
+}
+
+/* The Building with logos are cropped out of padded Figma exports (image inside frame). */
+const WAA_CROP: Crop = { top: "-51.75%", left: "-7.33%", width: "114.67%", height: "202.69%" };
+const HYPERSCALER_CROP: Crop = { top: "-61.74%", left: "-7.81%", width: "114.06%", height: "221.21%" };
+
+/**
+ * The ventures Ujjwal is building now, on the same endless loop as Formerly at. Every size is in
+ * em (Figma's px ÷ 17.713, the wordmark's size); the font size is set so the logos stand as tall
+ * as Meta, Micron, IBM and Intel above, and it shrinks with the same 80vw rule as that strip.
+ * The loop runs slower than the strip's 22s because one copy is longer, so both drift past at
+ * the same speed.
+ */
+function BuildingWith() {
+  return (
+    <LogoLoop label="ScaleBuild AI, World AI Alliance and Hyperscaler" duration="33s">
+      <ul className="flex items-center gap-[1.75em] pr-[1.75em] text-[clamp(16px,4.25vw,23px)] text-subtle">
+        <li className="flex items-center gap-[0.38em] py-[0.38em]">
+          <InfinityMark />
+          <span className="whitespace-nowrap font-semibold leading-[1.4]">
+            <span className="font-[family-name:var(--font-onest)]">ScaleBuild </span>
+            <span className="font-[family-name:var(--font-spectral)] italic">AI</span>
+          </span>
+        </li>
+        <li>
+          <CroppedImage
+            src="/images/building/world-ai-alliance.webp"
+            alt="World AI Alliance"
+            crop={WAA_CROP}
+            sizes="180px"
+            className="h-[2.171em] w-[9.046em]"
+          />
+        </li>
+        <li className="flex items-center gap-[0.19em] py-[0.38em]">
+          <InfinityMark />
+          <CroppedImage
+            src="/images/building/hyperscaler.webp"
+            alt="Hyperscaler"
+            crop={HYPERSCALER_CROP}
+            sizes="100px"
+            className="h-[1.019em] w-[4.66em]"
+          />
+        </li>
+      </ul>
+    </LogoLoop>
+  );
+}
+
+/** An endless horizontal loop: the content is drawn twice so a -50% translate wraps seamlessly,
+    and the ends fade into the hero. */
+function LogoLoop({ label, duration, children }: { label: string; duration?: string; children: React.ReactNode }) {
   return (
     <div
       data-hero="fade"
       role="img"
-      aria-label="Meta, Micron, IBM and Intel"
+      aria-label={label}
       className="w-full overflow-hidden opacity-80 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
     >
-      <div className="flex w-max animate-marquee-logos will-change-transform">
+      <div className="flex w-max animate-marquee-logos will-change-transform" style={duration ? { animationDuration: duration } : undefined}>
         {[0, 1].map((copy) => (
-          <div key={copy} className="shrink-0 pr-10">
-            <div className="relative aspect-[441/58] w-[clamp(300px,80vw,433px)] overflow-hidden">
-              <Image
-                src="/images/hero-employer-logos.png"
-                alt=""
-                width={2172}
-                height={724}
-                sizes="(min-width: 768px) 470px, 100vw"
-                className="absolute left-[-5.97%] top-[-84.57%] h-[268.78%] w-[106.05%] max-w-none"
-              />
-            </div>
+          <div key={copy} aria-hidden={copy === 1} className="shrink-0">
+            {children}
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+/** The infinity mark shared by ScaleBuild AI and Hyperscaler. */
+function InfinityMark() {
+  return (
+    <span className="relative block h-[1.254em] w-[2.239em] shrink-0">
+      <Image src="/images/building/infinity.webp" alt="" fill sizes="48px" className="object-cover" />
+    </span>
+  );
+}
+
+/** The former employers on an endless loop, like the Launched Products titles: the logo strip
+    is drawn twice so a -50% translate wraps seamlessly, and the ends fade into the hero. */
+function LogoMarquee() {
+  return (
+    <LogoLoop label="Meta, Micron, IBM and Intel">
+      <div className="pr-10">
+        <div className="relative aspect-[441/58] w-[clamp(300px,80vw,433px)] overflow-hidden">
+          <Image
+            src="/images/hero-employer-logos.webp"
+            alt=""
+            width={2172}
+            height={724}
+            sizes="(min-width: 768px) 470px, 100vw"
+            className="absolute left-[-5.97%] top-[-84.57%] h-[268.78%] w-[106.05%] max-w-none"
+          />
+        </div>
+      </div>
+    </LogoLoop>
   );
 }

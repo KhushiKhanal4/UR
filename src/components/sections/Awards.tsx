@@ -22,7 +22,7 @@ export function Awards() {
           >
             <div className="flex items-start gap-5">
               <Image
-                src="/images/award.png"
+                src="/images/award.webp"
                 alt=""
                 width={32}
                 height={32}
